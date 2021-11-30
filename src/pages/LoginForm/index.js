@@ -41,6 +41,7 @@ export default class LoginForm extends Component {
                     // console.log('Masuk if status 200');
                     // this.props.navigation.navigate('DetailLaryawan');
                     Alert.alert('OK ', response.data.metadata.message);
+                    this.props.navigation.navigate('Home')
 
                 } else {
                     console.log(
