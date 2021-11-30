@@ -3,6 +3,7 @@ import React, { Component, useState } from 'react'
 import { Text, StyleSheet, View,  TouchableOpacity, Alert, FlatList, Image } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import axios from 'axios';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Item = ({ item, onPress }) => (
     <TouchableOpacity onPress={onPress}>
@@ -10,38 +11,7 @@ const Item = ({ item, onPress }) => (
     </TouchableOpacity>
     );
 
-const renderItem = ({item}) => {
-    return (
-        <View style={styles.flatstyle}>
-            <View style={{paddingRight: 20}}>
-                <Image style={styles.pic} source={require('./assets/defpicture.png')} />
-            </View>
-            <View style={{width: 220}}>
-                <Text>NIP</Text>
-                <Text>{item.nip}</Text>
-                <Text>Nama</Text>
-                <Text>{item.nama}</Text>
-                <Text>Alamat</Text>
-                <Text>{item.alamat}</Text>
-            </View>
-            <View style={{flexDirection: 'row', width: 50}}>
-                <TouchableOpacity onPress={()=>this.editKaryawan()}>
-                    <View>
-                        <Image style={styles.pic1} source={require('./assets/pencil.png')} />
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={()=>this.hapusKaryawan()}>
-                    <View>
-                        <Image style={styles.pic2} source={require('./assets/trash.png')} />
-                    </View>
-                </TouchableOpacity>
-            </View>
-        </View>
-        // 
-    );
-};
-
-export default class DetailLaryawan extends Component {
+export default class DetailKaryawan extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -51,18 +21,11 @@ export default class DetailLaryawan extends Component {
 
     componentDidMount() {
         this.checkAPI();
-    }
-
-    // const [selectedId, setSelectedId] = useState(null);
-    // keyExtractor = (item, index) => index.toString()
-    // renderItem = ({ item }) => (
-    // <ListItem
-    //     title={item.nama}
-    //     leftAvatar={{ source: { uri: prefik_url+item.gambar } }}
-    // />)    
+    }  
 
     editKaryawan = () => {
-        Alert.alert('Click Button Edit Karyawan ');
+        console.log("masuk edit karyawan");
+        this.props.navigation.navigate('DetailEditKaryawan');
     }
 
     hapusKaryawan = () => {
@@ -91,12 +54,10 @@ export default class DetailLaryawan extends Component {
 
             if (response.data.metadata.status === 200) {
                 const datakaryawan = response.data.response;
-                // console.log('data karyawan: ', datakaryawan);
                 this.setState({
                     karyawan: datakaryawan
                 });
                 console.log('data karyawan state: ', this.state.karyawan);
-                // Alert.alert('OK ', response.data.metadata.message);
 
             } else {
                 console.log(
@@ -121,21 +82,29 @@ export default class DetailLaryawan extends Component {
                 <View style={styles.isi}>
                     <FlatList
                         data={this.state.karyawan}
-                        renderItem={renderItem}
+                        renderItem={({item}) => {
+                            return (
+                                <View style={styles.flatstyle}>
+                                    <View style={{paddingRight: 10}}>
+                                        <Icon name="user-o" size={25} color="gray"/>
+                                    </View>
+                                    <View style={{width: 220}}>
+                                        <Text style={{ fontWeight: 'bold'}}>NIP</Text>
+                                        <Text>{item.nip}</Text>
+                                        <Text style={{ fontWeight: 'bold'}}>Nama</Text>
+                                        <Text>{item.nama}</Text>
+                                        <Text style={{ fontWeight: 'bold'}}>Alamat</Text>
+                                        <Text>{item.alamat}</Text>
+                                    </View>
+                                    <View style={{flexDirection: 'row', width: 70}}>
+                                        <Icon style={styles.iconStyle} name="pencil" size={25} color="gray" onPress={()=>this.editKaryawan()} />
+                                        <Icon style={styles.iconStyle} name="trash-o" size={25} color="gray" onPress={()=>this.hapusKaryawan()} />
+                                    </View>
+                                </View>
+                                // 
+                            );
+                        }}
                         keyExtractor={item => item.nip}
-                        // renderItem={({ item }) => (
-                        //     // <ListItem
-                        //     // title={`NIP`}
-                        //     // //   subtitle={item.email}
-                        //     // keyExtractor={item => item.nip}
-                        //     // />
-                        //     // <View>
-                        //     //     <Text>Data Karyawan</Text>
-                        //     // </View>
-                        //     <ListItem
-                        //         title="First Item"
-                        //     />
-                        // )}
                     />
                 </View>
             </View>
@@ -181,5 +150,8 @@ const styles = StyleSheet.create({
     textButton: {
         textAlign: 'center',
         fontWeight: 'bold'
+    },
+    iconStyle: {
+        paddingRight: 10
     }
 })
